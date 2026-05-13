@@ -35,19 +35,14 @@ app.get("/", (req, res) => {
  */
 app.post("/call", async (req, res) => {
   try {
-
-    const {
-      number,
-      firstMessage,
-      systemMessage
-    } = req.body;
+    const { number, firstMessage, systemMessage } = req.body;
 
     /**
      * Validation
      */
     if (!number) {
       return res.status(400).json({
-        error: "Phone number is required"
+        error: "Phone number is required",
       });
     }
 
@@ -58,49 +53,42 @@ app.post("/call", async (req, res) => {
         phoneNumberId: process.env.PHONE_NUMBER_ID,
 
         customer: {
-          number
+          number,
         },
 
-assistantOverrides: {
-  firstMessage: firstMessage || "Hello.",
+        assistantOverrides: {
+          firstMessage: firstMessage || "Hello.",
 
-  model: {
-    provider: "openai",
-    model: "gpt-4o",
-    messages: [
-      {
-        role: "system",
-        content:
-          systemMessage ||
-          "You are a helpful AI assistant."
-      }
-    ]
-  }
-}
+          model: {
+            provider: "openai",
+            model: "gpt-4o",
+            messages: [
+              {
+                role: "system",
+                content: systemMessage || "You are a helpful AI assistant.",
+              },
+            ],
+          },
+        },
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.VAPI_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
+          "Content-Type": "application/json",
+        },
+      },
     );
 
     res.json({
       success: true,
-      data: response.data
+      data: response.data,
     });
-
   } catch (error) {
-
-    console.error(
-      error.response?.data || error.message
-    );
+    console.error(error.response?.data || error.message);
 
     res.status(500).json({
       success: false,
-      error:
-        error.response?.data || error.message
+      error: error.response?.data || error.message,
     });
   }
 });
@@ -109,7 +97,5 @@ assistantOverrides: {
  * Start server
  */
 app.listen(3000, "0.0.0.0", () => {
-  console.log(
-    "Server running on http://localhost:3000"
-  );
+  console.log("Server running on http://localhost:3000");
 });
